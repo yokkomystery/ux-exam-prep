@@ -33,7 +33,7 @@ export default function Dashboard() {
     <div className="space-y-8">
       <div>
         <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">UX検定基礎 対策</h1>
-        <p className="text-gray-500 dark:text-gray-400 mt-1">第12回 UX検定基礎試験に向けた学習ダッシュボード</p>
+        <p className="text-gray-500 dark:text-gray-400 mt-1">UX検定基礎試験に向けた学習ダッシュボード</p>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
