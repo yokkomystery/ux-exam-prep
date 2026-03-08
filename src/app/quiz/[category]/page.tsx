@@ -24,7 +24,7 @@ type AnswerRecord = { id: string; correct: boolean; question: Question };
 export default function QuizPage() {
   const params = useParams();
   const categoryId = params.category as string;
-  const { answerQuestion, isLoaded } = useProgress();
+  const { answerQuestion, toggleQuestionBookmark, progress, isLoaded } = useProgress();
   const [currentIndex, setCurrentIndex] = useState(0);
   const [answers, setAnswers] = useState<AnswerRecord[]>([]);
   const [isFinished, setIsFinished] = useState(false);
@@ -295,6 +295,8 @@ export default function QuizPage() {
           }
         }}
         isLast={currentIndex + 1 >= questions.length}
+        isBookmarked={progress.quiz.bookmarkedQuestions.includes(currentQuestion.id)}
+        onToggleBookmark={toggleQuestionBookmark}
       />
     </div>
   );

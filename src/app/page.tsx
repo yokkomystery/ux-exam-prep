@@ -99,6 +99,24 @@ export default function Dashboard() {
         </Link>
       )}
 
+      {progress.quiz.bookmarkedQuestions.length > 0 && (
+        <Link
+          href="/review"
+          className="flex items-center justify-between p-4 bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 rounded-xl hover:bg-amber-100 dark:hover:bg-amber-900/30 transition-colors"
+        >
+          <div className="flex items-center gap-2">
+            <svg className="w-4 h-4 text-amber-600 dark:text-amber-400" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" />
+            </svg>
+            <span className="font-bold text-amber-700 dark:text-amber-300">ブックマーク</span>
+            <span className="text-amber-500 dark:text-amber-400 text-sm">
+              {progress.quiz.bookmarkedQuestions.length}問
+            </span>
+          </div>
+          <span className="text-amber-400 dark:text-amber-500" aria-hidden="true">→</span>
+        </Link>
+      )}
+
       <div>
         <h2 className="text-lg font-bold text-gray-900 dark:text-gray-100 mb-3">カテゴリ別進捗</h2>
         <div className="space-y-2">

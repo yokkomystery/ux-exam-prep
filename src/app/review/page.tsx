@@ -5,7 +5,7 @@ import Link from "next/link";
 import { QuizCard } from "@/components/QuizCard";
 import { useProgress } from "@/hooks/useProgress";
 import { questions as allQuestions } from "@/data/questions";
-import { getWrongQuestionIds } from "@/lib/storage";
+import { getWrongQuestionIds, getEverWrongQuestionIds } from "@/lib/storage";
 import { Question } from "@/lib/types";
 
 function shuffleArray<T>(array: T[]): T[] {
@@ -18,9 +18,17 @@ function shuffleArray<T>(array: T[]): T[] {
 }
 
 type AnswerRecord = { id: string; correct: boolean; question: Question };
+type ReviewTab = "wrong" | "history" | "bookmarked";
+
+const tabLabels: Record<ReviewTab, string> = {
+  wrong: "未正解",
+  history: "間違え履歴",
+  bookmarked: "ブックマーク",
+};
 
 export default function ReviewPage() {
-  const { answerQuestion, isLoaded } = useProgress();
+  const { answerQuestion, toggleQuestionBookmark, progress, isLoaded } = useProgress();
+  const [tab, setTab] = useState<ReviewTab>("wrong");
   const [currentIndex, setCurrentIndex] = useState(0);
   const [answers, setAnswers] = useState<AnswerRecord[]>([]);
   const [isFinished, setIsFinished] = useState(false);
@@ -28,10 +36,35 @@ export default function ReviewPage() {
   const wrongQuestions = useMemo(() => {
     if (!isLoaded) return [];
     const wrongIds = getWrongQuestionIds();
-    return shuffleArray(
-      allQuestions.filter((q) => wrongIds.includes(q.id))
-    );
+    return shuffleArray(allQuestions.filter((q) => wrongIds.includes(q.id)));
   }, [isLoaded]);
+
+  const everWrongQuestions = useMemo(() => {
+    if (!isLoaded) return [];
+    const ids = getEverWrongQuestionIds();
+    return shuffleArray(allQuestions.filter((q) => ids.includes(q.id)));
+  }, [isLoaded]);
+
+  const bookmarkedQuestions = useMemo(() => {
+    if (!isLoaded) return [];
+    return shuffleArray(
+      allQuestions.filter((q) => progress.quiz.bookmarkedQuestions.includes(q.id))
+    );
+  }, [isLoaded, progress.quiz.bookmarkedQuestions]);
+
+  const currentQuestions =
+    tab === "wrong" ? wrongQuestions : tab === "history" ? everWrongQuestions : bookmarkedQuestions;
+
+  const resetQuiz = useCallback(() => {
+    setCurrentIndex(0);
+    setAnswers([]);
+    setIsFinished(false);
+  }, []);
+
+  const handleTabChange = (newTab: ReviewTab) => {
+    setTab(newTab);
+    resetQuiz();
+  };
 
   if (!isLoaded) {
     return (
@@ -41,15 +74,22 @@ export default function ReviewPage() {
     );
   }
 
-  if (wrongQuestions.length === 0) {
+  const tabCounts: Record<ReviewTab, number> = {
+    wrong: wrongQuestions.length,
+    history: everWrongQuestions.length,
+    bookmarked: bookmarkedQuestions.length,
+  };
+
+  // 全タブが空
+  if (tabCounts.wrong === 0 && tabCounts.history === 0 && tabCounts.bookmarked === 0) {
     return (
       <div className="space-y-6 text-center py-20">
         <div className="text-5xl">🎉</div>
         <h2 className="text-xl font-bold text-gray-900 dark:text-gray-100">
-          間違えた問題はありません！
+          復習する問題はありません！
         </h2>
         <p className="text-gray-500 dark:text-gray-400">
-          まだクイズに挑戦していないか、全問正解しています。
+          クイズに挑戦して、気になる問題をブックマークしよう。
         </p>
         <Link
           href="/quiz"
@@ -67,7 +107,6 @@ export default function ReviewPage() {
     const total = answers.length;
     const accuracy = total > 0 ? Math.round((correct / total) * 100) : 0;
 
-    // 分野別正答率
     const categoryStats: Record<string, { correct: number; total: number }> = {};
     for (const a of answers) {
       const cat = a.question.category;
@@ -76,13 +115,14 @@ export default function ReviewPage() {
       if (a.correct) categoryStats[cat].correct++;
     }
     const sortedCategories = Object.entries(categoryStats).sort(
-      ([, a], [, b]) => (a.correct / a.total) - (b.correct / b.total)
+      ([, a], [, b]) => a.correct / a.total - b.correct / b.total
     );
 
     return (
       <div className="space-y-6">
         <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-8 text-center">
           <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-2">復習結果</h2>
+          <p className="text-gray-500 dark:text-gray-400 text-sm mb-4">{tabLabels[tab]}</p>
           <div className="text-6xl font-bold mb-4">
             <span className={accuracy >= 70 ? "text-green-600" : "text-red-600"}>
               {accuracy}%
@@ -105,7 +145,6 @@ export default function ReviewPage() {
           )}
         </div>
 
-        {/* 分野別正答率 */}
         {Object.keys(categoryStats).length > 1 && (
           <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6">
             <h3 className="text-lg font-bold text-gray-900 dark:text-gray-100 mb-4">分野別正答率</h3>
@@ -141,11 +180,7 @@ export default function ReviewPage() {
             ダッシュボードに戻る
           </Link>
           <button
-            onClick={() => {
-              setCurrentIndex(0);
-              setAnswers([]);
-              setIsFinished(false);
-            }}
+            onClick={resetQuiz}
             className="flex-1 py-3 bg-rose-600 text-white rounded-lg hover:bg-rose-700 transition-colors font-medium"
           >
             もう一度復習
@@ -155,46 +190,77 @@ export default function ReviewPage() {
     );
   }
 
-  const currentQuestion = wrongQuestions[currentIndex];
-
+  // タブUI + クイズ表示
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
         <Link href="/" className="text-sm text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 min-h-[44px] inline-flex items-center">
           ← ダッシュボード
         </Link>
-        <div className="text-sm text-gray-500 dark:text-gray-400">
-          復習: {wrongQuestions.length}問
+      </div>
+
+      {/* タブ */}
+      <div className="flex gap-2">
+        {(["wrong", "history", "bookmarked"] as const).map((t) => (
+          <button
+            key={t}
+            onClick={() => handleTabChange(t)}
+            className={`px-3 sm:px-4 py-2 rounded-lg text-xs sm:text-sm font-medium transition-colors ${
+              tab === t
+                ? "bg-rose-600 text-white"
+                : "bg-white dark:bg-gray-800 text-gray-600 dark:text-gray-400 border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700"
+            }`}
+          >
+            {tabLabels[t]}
+            <span className="ml-1 opacity-75">({tabCounts[t]})</span>
+          </button>
+        ))}
+      </div>
+
+      {/* 空の場合 */}
+      {currentQuestions.length === 0 ? (
+        <div className="text-center py-12 text-gray-400 dark:text-gray-500">
+          {tab === "wrong" && "現在、未正解の問題はありません"}
+          {tab === "history" && "まだ間違えた問題はありません"}
+          {tab === "bookmarked" && "ブックマークした問題はありません。クイズ回答後にブックマークできます"}
         </div>
-      </div>
+      ) : (
+        <>
+          <div className="flex items-center justify-between text-sm text-gray-500 dark:text-gray-400">
+            <span>復習: {currentQuestions.length}問</span>
+          </div>
 
-      <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-1">
-        <div
-          className="bg-rose-500 h-1 rounded-full transition-all"
-          style={{
-            width: `${((currentIndex + 1) / wrongQuestions.length) * 100}%`,
-          }}
-        />
-      </div>
+          <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-1">
+            <div
+              className="bg-rose-500 h-1 rounded-full transition-all"
+              style={{
+                width: `${((currentIndex + 1) / currentQuestions.length) * 100}%`,
+              }}
+            />
+          </div>
 
-      <QuizCard
-        key={currentQuestion.id}
-        question={currentQuestion}
-        questionNumber={currentIndex + 1}
-        totalQuestions={wrongQuestions.length}
-        onAnswer={(id, correct) => {
-          answerQuestion(id, correct);
-          setAnswers((prev) => [...prev, { id, correct, question: currentQuestion }]);
-        }}
-        onNext={() => {
-          if (currentIndex + 1 >= wrongQuestions.length) {
-            setIsFinished(true);
-          } else {
-            setCurrentIndex(currentIndex + 1);
-          }
-        }}
-        isLast={currentIndex + 1 >= wrongQuestions.length}
-      />
+          <QuizCard
+            key={`${tab}-${currentQuestions[currentIndex].id}`}
+            question={currentQuestions[currentIndex]}
+            questionNumber={currentIndex + 1}
+            totalQuestions={currentQuestions.length}
+            onAnswer={(id, correct) => {
+              answerQuestion(id, correct);
+              setAnswers((prev) => [...prev, { id, correct, question: currentQuestions[currentIndex] }]);
+            }}
+            onNext={() => {
+              if (currentIndex + 1 >= currentQuestions.length) {
+                setIsFinished(true);
+              } else {
+                setCurrentIndex(currentIndex + 1);
+              }
+            }}
+            isLast={currentIndex + 1 >= currentQuestions.length}
+            isBookmarked={progress.quiz.bookmarkedQuestions.includes(currentQuestions[currentIndex].id)}
+            onToggleBookmark={toggleQuestionBookmark}
+          />
+        </>
+      )}
     </div>
   );
 }

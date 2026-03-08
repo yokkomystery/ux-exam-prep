@@ -10,6 +10,8 @@ type QuizCardProps = {
   onAnswer: (questionId: string, correct: boolean) => void;
   onNext: () => void;
   isLast: boolean;
+  isBookmarked?: boolean;
+  onToggleBookmark?: (questionId: string) => void;
 };
 
 const difficultyLabel = {
@@ -25,6 +27,8 @@ export function QuizCard({
   onAnswer,
   onNext,
   isLast,
+  isBookmarked,
+  onToggleBookmark,
 }: QuizCardProps) {
   const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
   const [answered, setAnswered] = useState(false);
@@ -143,6 +147,24 @@ export function QuizCard({
                   </span>
                 ))}
               </div>
+            )}
+
+            {onToggleBookmark && (
+              <button
+                onClick={() => onToggleBookmark(question.id)}
+                className={`flex items-center justify-center gap-1.5 w-full py-2.5 rounded-lg border transition-colors min-h-[44px] ${
+                  isBookmarked
+                    ? "bg-amber-50 dark:bg-amber-900/20 border-amber-300 dark:border-amber-700 text-amber-700 dark:text-amber-300"
+                    : "bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-600 text-gray-500 dark:text-gray-400 hover:border-amber-300 dark:hover:border-amber-600"
+                }`}
+              >
+                <svg className="w-4 h-4" fill={isBookmarked ? "currentColor" : "none"} viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" />
+                </svg>
+                <span className="text-sm font-medium">
+                  {isBookmarked ? "ブックマーク済み" : "ブックマーク"}
+                </span>
+              </button>
             )}
 
             <button

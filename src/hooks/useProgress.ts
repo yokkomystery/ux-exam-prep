@@ -12,7 +12,7 @@ import {
 } from "@/lib/storage";
 
 const defaultProgress: Progress = {
-  quiz: { answeredQuestions: {}, bookmarkedQuestions: [] },
+  quiz: { answeredQuestions: {}, bookmarkedQuestions: [], everWrongQuestions: [] },
   keywords: { learnedKeywords: [], bookmarkedKeywords: [] },
 };
 

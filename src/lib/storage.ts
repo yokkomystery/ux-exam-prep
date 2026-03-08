@@ -6,6 +6,7 @@ const defaultProgress: Progress = {
   quiz: {
     answeredQuestions: {},
     bookmarkedQuestions: [],
+    everWrongQuestions: [],
   },
   keywords: {
     learnedKeywords: [],
@@ -18,7 +19,13 @@ export function getProgress(): Progress {
   try {
     const data = localStorage.getItem(STORAGE_KEY);
     if (!data) return defaultProgress;
-    return JSON.parse(data) as Progress;
+    const parsed = JSON.parse(data) as Progress;
+    if (!parsed.quiz.everWrongQuestions) {
+      parsed.quiz.everWrongQuestions = Object.entries(parsed.quiz.answeredQuestions)
+        .filter(([, v]) => !v.correct)
+        .map(([id]) => id);
+    }
+    return parsed;
   } catch {
     return defaultProgress;
   }
@@ -38,6 +45,9 @@ export function recordQuizAnswer(
     correct,
     answeredAt: Date.now(),
   };
+  if (!correct && !progress.quiz.everWrongQuestions.includes(questionId)) {
+    progress.quiz.everWrongQuestions.push(questionId);
+  }
   saveProgress(progress);
   return progress;
 }
@@ -94,6 +104,11 @@ export function getWrongQuestionIds(): string[] {
   return Object.entries(progress.quiz.answeredQuestions)
     .filter(([, v]) => !v.correct)
     .map(([id]) => id);
+}
+
+export function getEverWrongQuestionIds(): string[] {
+  const progress = getProgress();
+  return progress.quiz.everWrongQuestions;
 }
 
 export function resetProgress(): void {
