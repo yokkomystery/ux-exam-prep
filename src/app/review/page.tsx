@@ -53,7 +53,7 @@ export default function ReviewPage() {
         </p>
         <Link
           href="/quiz"
-          className="inline-block px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium"
+          className="inline-block px-6 py-3 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors font-medium"
         >
           クイズに挑戦する
         </Link>
@@ -113,17 +113,19 @@ export default function ReviewPage() {
               {sortedCategories.map(([cat, s]) => {
                 const pct = Math.round((s.correct / s.total) * 100);
                 return (
-                  <div key={cat} className="flex items-center gap-3">
-                    <span className="text-sm text-gray-700 dark:text-gray-300 w-40 shrink-0 truncate">{cat}</span>
-                    <div className="flex-1 bg-gray-200 dark:bg-gray-700 rounded-full h-2">
-                      <div
-                        className={`h-2 rounded-full ${pct >= 70 ? "bg-green-500" : pct >= 50 ? "bg-yellow-500" : "bg-red-500"}`}
-                        style={{ width: `${pct}%` }}
-                      />
+                  <div key={cat} className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-3">
+                    <span className="text-sm text-gray-700 dark:text-gray-300 sm:w-40 sm:shrink-0 truncate">{cat}</span>
+                    <div className="flex items-center gap-2 w-full sm:flex-1">
+                      <div className="flex-1 bg-gray-200 dark:bg-gray-700 rounded-full h-2">
+                        <div
+                          className={`h-2 rounded-full ${pct >= 70 ? "bg-green-500" : pct >= 50 ? "bg-yellow-500" : "bg-red-500"}`}
+                          style={{ width: `${pct}%` }}
+                        />
+                      </div>
+                      <span className="text-xs sm:text-sm text-gray-600 dark:text-gray-400 shrink-0">
+                        {pct}% ({s.correct}/{s.total})
+                      </span>
                     </div>
-                    <span className="text-sm text-gray-600 dark:text-gray-400 w-16 text-right">
-                      {pct}% ({s.correct}/{s.total})
-                    </span>
                   </div>
                 );
               })}
@@ -144,7 +146,7 @@ export default function ReviewPage() {
               setAnswers([]);
               setIsFinished(false);
             }}
-            className="flex-1 py-3 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors font-medium"
+            className="flex-1 py-3 bg-rose-600 text-white rounded-lg hover:bg-rose-700 transition-colors font-medium"
           >
             もう一度復習
           </button>
@@ -158,7 +160,7 @@ export default function ReviewPage() {
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
-        <Link href="/" className="text-sm text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200">
+        <Link href="/" className="text-sm text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 min-h-[44px] inline-flex items-center">
           ← ダッシュボード
         </Link>
         <div className="text-sm text-gray-500 dark:text-gray-400">
@@ -168,7 +170,7 @@ export default function ReviewPage() {
 
       <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-1">
         <div
-          className="bg-red-500 h-1 rounded-full transition-all"
+          className="bg-rose-500 h-1 rounded-full transition-all"
           style={{
             width: `${((currentIndex + 1) / wrongQuestions.length) * 100}%`,
           }}

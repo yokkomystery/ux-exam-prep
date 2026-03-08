@@ -70,7 +70,7 @@ export default function KeywordPage() {
         <div>
           <Link
             href="/keywords"
-            className="text-sm text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200"
+            className="text-sm text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 min-h-[44px] inline-flex items-center"
           >
             ← キーワード一覧
           </Link>
@@ -90,7 +90,7 @@ export default function KeywordPage() {
             onClick={() => setFilter(f)}
             className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
               filter === f
-                ? "bg-orange-500 text-white"
+                ? "bg-teal-600 text-white"
                 : "bg-white dark:bg-gray-800 text-gray-600 dark:text-gray-400 border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700"
             }`}
           >

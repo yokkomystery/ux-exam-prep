@@ -72,7 +72,7 @@ export default function QuizPage() {
     return (
       <div className="text-center py-20">
         <p className="text-gray-500 dark:text-gray-400">このカテゴリに問題がありません</p>
-        <Link href="/quiz" className="text-blue-600 dark:text-blue-400 mt-4 inline-block">
+        <Link href="/quiz" className="text-indigo-600 dark:text-indigo-400 mt-4 inline-block">
           ← カテゴリ選択に戻る
         </Link>
       </div>
@@ -182,17 +182,19 @@ export default function QuizPage() {
               {sortedCategories.map(([cat, s]) => {
                 const pct = Math.round((s.correct / s.total) * 100);
                 return (
-                  <div key={cat} className="flex items-center gap-3">
-                    <span className="text-sm text-gray-700 dark:text-gray-300 w-40 shrink-0 truncate">{cat}</span>
-                    <div className="flex-1 bg-gray-200 dark:bg-gray-700 rounded-full h-2">
-                      <div
-                        className={`h-2 rounded-full ${pct >= 70 ? "bg-green-500" : pct >= 50 ? "bg-yellow-500" : "bg-red-500"}`}
-                        style={{ width: `${pct}%` }}
-                      />
+                  <div key={cat} className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-3">
+                    <span className="text-sm text-gray-700 dark:text-gray-300 sm:w-40 sm:shrink-0 truncate">{cat}</span>
+                    <div className="flex items-center gap-2 w-full sm:flex-1">
+                      <div className="flex-1 bg-gray-200 dark:bg-gray-700 rounded-full h-2">
+                        <div
+                          className={`h-2 rounded-full ${pct >= 70 ? "bg-green-500" : pct >= 50 ? "bg-yellow-500" : "bg-red-500"}`}
+                          style={{ width: `${pct}%` }}
+                        />
+                      </div>
+                      <span className="text-xs sm:text-sm text-gray-600 dark:text-gray-400 shrink-0">
+                        {pct}% ({s.correct}/{s.total})
+                      </span>
                     </div>
-                    <span className="text-sm text-gray-600 dark:text-gray-400 w-16 text-right">
-                      {pct}% ({s.correct}/{s.total})
-                    </span>
                   </div>
                 );
               })}
@@ -231,7 +233,7 @@ export default function QuizPage() {
               setAnswers([]);
               setIsFinished(false);
             }}
-            className="flex-1 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium"
+            className="flex-1 py-3 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors font-medium"
           >
             もう一度挑戦
           </button>
@@ -239,7 +241,7 @@ export default function QuizPage() {
         {wrong > 0 && (
           <Link
             href="/review"
-            className="block text-center py-3 bg-red-50 dark:bg-red-900/20 text-red-700 dark:text-red-300 border border-red-200 dark:border-red-800 rounded-lg hover:bg-red-100 dark:hover:bg-red-900/30 transition-colors font-medium"
+            className="block text-center py-3 bg-rose-50 dark:bg-rose-900/20 text-rose-700 dark:text-rose-300 border border-rose-200 dark:border-rose-800 rounded-lg hover:bg-rose-100 dark:hover:bg-rose-900/30 transition-colors font-medium"
           >
             間違えた問題を復習する
           </Link>
@@ -269,7 +271,7 @@ export default function QuizPage() {
 
       <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-1">
         <div
-          className="bg-blue-500 h-1 rounded-full transition-all"
+          className="bg-indigo-500 h-1 rounded-full transition-all"
           style={{
             width: `${((currentIndex + 1) / questions.length) * 100}%`,
           }}

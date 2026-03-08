@@ -29,7 +29,7 @@ export function KeywordCard({
       tabIndex={0}
       aria-expanded={isFlipped}
       aria-label={`${keyword.term}: ${isFlipped ? "解説を非表示にする" : "解説を表示する"}`}
-      className={`bg-white dark:bg-gray-800 rounded-xl shadow-sm border-2 transition-all cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 ${
+      className={`bg-white dark:bg-gray-800 rounded-xl shadow-sm border-2 transition-all cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-500 focus-visible:ring-offset-2 ${
         isLearned
           ? "border-green-300 dark:border-green-700 bg-green-50/30 dark:bg-green-900/10"
           : "border-gray-200 dark:border-gray-700"
@@ -45,7 +45,7 @@ export function KeywordCard({
               e.stopPropagation();
               onToggleLearned(keyword.id);
             }}
-            className={`text-xs px-3 py-1.5 min-h-[36px] rounded-full transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 ${
+            className={`text-xs px-3 py-1.5 min-h-[36px] rounded-full transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-500 ${
               isLearned
                 ? "bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300 hover:bg-green-200 dark:hover:bg-green-900/50"
                 : "bg-gray-100 dark:bg-gray-700 text-gray-500 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-600"
@@ -69,7 +69,7 @@ export function KeywordCard({
                 {keyword.relatedTerms.map((term) => (
                   <span
                     key={term}
-                    className="text-xs bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 px-2 py-0.5 rounded"
+                    className="text-xs bg-teal-50 dark:bg-teal-900/30 text-teal-600 dark:text-teal-400 px-2 py-0.5 rounded"
                   >
                     {term}
                   </span>

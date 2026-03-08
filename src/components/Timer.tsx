@@ -47,8 +47,12 @@ export function Timer({ durationMinutes, onTimeUp }: TimerProps) {
     : "bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700";
 
   return (
-    <div className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-lg border text-sm font-mono font-medium ${bgClass} ${colorClass}`}>
-      <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+    <div
+      className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-lg border text-sm font-mono font-medium min-h-[44px] ${bgClass} ${colorClass}`}
+      role="timer"
+      aria-label={`残り時間 ${minutes}分${seconds}秒`}
+    >
+      <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
       </svg>
       {String(minutes).padStart(2, "0")}:{String(seconds).padStart(2, "0")}

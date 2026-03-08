@@ -39,7 +39,7 @@ export default function Dashboard() {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <div className="bg-white dark:bg-gray-800 rounded-xl p-5 border border-gray-200 dark:border-gray-700 shadow-sm">
           <div className="text-sm text-gray-500 dark:text-gray-400 mb-1">クイズ進捗</div>
-          <div className="text-3xl font-bold text-blue-600 dark:text-blue-400">
+          <div className="text-3xl font-bold text-indigo-600 dark:text-indigo-400">
             {answeredCount}<span className="text-lg text-gray-400 dark:text-gray-500">/{totalQuestions}</span>
           </div>
           <ProgressBar value={answeredCount} max={totalQuestions} color="blue" />
@@ -47,7 +47,7 @@ export default function Dashboard() {
 
         <div className="bg-white dark:bg-gray-800 rounded-xl p-5 border border-gray-200 dark:border-gray-700 shadow-sm">
           <div className="text-sm text-gray-500 dark:text-gray-400 mb-1">正答率</div>
-          <div className="text-3xl font-bold text-green-600 dark:text-green-400">
+          <div className="text-3xl font-bold text-emerald-600 dark:text-emerald-400">
             {accuracy}<span className="text-lg text-gray-400 dark:text-gray-500">%</span>
           </div>
           <div className="text-xs text-gray-400 dark:text-gray-500 mt-1">
@@ -57,45 +57,45 @@ export default function Dashboard() {
 
         <div className="bg-white dark:bg-gray-800 rounded-xl p-5 border border-gray-200 dark:border-gray-700 shadow-sm">
           <div className="text-sm text-gray-500 dark:text-gray-400 mb-1">キーワード学習</div>
-          <div className="text-3xl font-bold text-orange-500 dark:text-orange-400">
+          <div className="text-3xl font-bold text-teal-600 dark:text-teal-400">
             {learnedCount}<span className="text-lg text-gray-400 dark:text-gray-500">/{totalKeywords}</span>
           </div>
-          <ProgressBar value={learnedCount} max={totalKeywords} color="orange" />
+          <ProgressBar value={learnedCount} max={totalKeywords} color="teal" />
         </div>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <Link
           href="/quiz"
-          className="flex flex-col items-center justify-center p-8 bg-blue-600 text-white rounded-xl hover:bg-blue-700 transition-colors shadow-sm"
+          className="flex flex-col items-center justify-center p-8 bg-indigo-600 text-white rounded-xl hover:bg-indigo-700 active:bg-indigo-800 transition-colors shadow-sm"
         >
           <span className="text-3xl mb-2">📝</span>
           <span className="font-bold text-lg">クイズに挑戦</span>
-          <span className="text-blue-200 text-sm mt-1">4択問題で知識を確認</span>
+          <span className="text-indigo-200 text-sm mt-1">4択問題で知識を確認</span>
         </Link>
 
         <Link
           href="/keywords"
-          className="flex flex-col items-center justify-center p-8 bg-orange-500 text-white rounded-xl hover:bg-orange-600 transition-colors shadow-sm"
+          className="flex flex-col items-center justify-center p-8 bg-teal-600 text-white rounded-xl hover:bg-teal-700 active:bg-teal-800 transition-colors shadow-sm"
         >
           <span className="text-3xl mb-2">🔑</span>
           <span className="font-bold text-lg">キーワード学習</span>
-          <span className="text-orange-200 text-sm mt-1">フラッシュカードで暗記</span>
+          <span className="text-teal-200 text-sm mt-1">フラッシュカードで暗記</span>
         </Link>
       </div>
 
       {wrongCount > 0 && (
         <Link
           href="/review"
-          className="flex items-center justify-between p-5 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-xl hover:bg-red-100 dark:hover:bg-red-900/30 transition-colors"
+          className="flex items-center justify-between p-5 bg-rose-50 dark:bg-rose-900/20 border border-rose-200 dark:border-rose-800 rounded-xl hover:bg-rose-100 dark:hover:bg-rose-900/30 transition-colors"
         >
           <div>
-            <span className="font-bold text-red-700 dark:text-red-300">間違えた問題を復習</span>
-            <span className="text-red-500 dark:text-red-400 text-sm ml-2">
+            <span className="font-bold text-rose-700 dark:text-rose-300">間違えた問題を復習</span>
+            <span className="text-rose-500 dark:text-rose-400 text-sm ml-2">
               {wrongCount}問
             </span>
           </div>
-          <span className="text-red-400 dark:text-red-500">→</span>
+          <span className="text-rose-400 dark:text-rose-500" aria-hidden="true">→</span>
         </Link>
       )}
 
@@ -128,7 +128,7 @@ export default function Dashboard() {
                 <div className="flex items-center gap-2 w-full sm:flex-1">
                   <div className="flex-1 bg-gray-200 dark:bg-gray-700 rounded-full h-1.5">
                     <div
-                      className="bg-blue-500 h-1.5 rounded-full transition-all"
+                      className="bg-indigo-500 h-1.5 rounded-full transition-all"
                       style={{
                         width: `${
                           catQuestions.length > 0

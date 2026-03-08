@@ -25,28 +25,28 @@ export default function QuizCategoryPage() {
 
       <Link
         href="/quiz/all"
-        className="flex items-center justify-between p-5 bg-blue-600 text-white rounded-xl hover:bg-blue-700 transition-colors"
+        className="flex items-center justify-between p-5 bg-indigo-600 text-white rounded-xl hover:bg-indigo-700 active:bg-indigo-800 transition-colors"
       >
         <div>
-          <span className="font-bold text-lg">全問チャレンジ</span>
-          <span className="text-blue-200 text-sm ml-2">
+          <span className="font-bold text-lg block">全問チャレンジ</span>
+          <span className="text-indigo-200 text-sm">
             {questions.length}問 / 100分タイマー付き
           </span>
         </div>
-        <span className="text-blue-200">→</span>
+        <span className="text-indigo-200 text-xl" aria-hidden="true">→</span>
       </Link>
 
       <Link
         href="/quiz/random"
-        className="flex items-center justify-between p-5 bg-purple-600 text-white rounded-xl hover:bg-purple-700 transition-colors"
+        className="flex items-center justify-between p-5 bg-violet-600 text-white rounded-xl hover:bg-violet-700 active:bg-violet-800 transition-colors"
       >
         <div>
-          <span className="font-bold text-lg">ランダム10問</span>
-          <span className="text-purple-200 text-sm ml-2">
+          <span className="font-bold text-lg block">ランダム10問</span>
+          <span className="text-violet-200 text-sm">
             全カテゴリからランダムに出題
           </span>
         </div>
-        <span className="text-purple-200">→</span>
+        <span className="text-violet-200 text-xl" aria-hidden="true">→</span>
       </Link>
 
       <div className="space-y-2">
@@ -82,34 +82,32 @@ export default function QuizCategoryPage() {
             <Link
               key={cat.id}
               href={`/quiz/${cat.id}`}
-              className="flex items-center justify-between p-4 bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 hover:border-blue-300 dark:hover:border-blue-600 hover:shadow-sm transition-all"
+              className="flex items-center justify-between gap-3 p-4 bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 hover:border-indigo-300 dark:hover:border-indigo-600 hover:shadow-sm transition-all min-h-[48px]"
             >
-              <div className="flex items-center gap-3">
+              <div className="flex items-center gap-2 sm:gap-3 min-w-0">
                 <span
-                  className={`text-xs font-medium px-2 py-0.5 rounded ${importanceStyle}`}
+                  className={`text-xs font-medium px-2 py-0.5 rounded shrink-0 ${importanceStyle}`}
                 >
                   {importanceText}
                 </span>
-                <div>
-                  <span className="font-medium text-gray-900 dark:text-gray-100">{cat.name}</span>
-                  <span className="text-gray-400 dark:text-gray-500 text-sm ml-2">
+                <div className="min-w-0">
+                  <span className="font-medium text-gray-900 dark:text-gray-100 text-sm sm:text-base truncate block">{cat.name}</span>
+                  <span className="text-gray-400 dark:text-gray-500 text-xs sm:text-sm">
                     {catQuestions.length}問
+                    {catAnswered > 0 && (
+                      <span className="ml-1.5">{percentage}% / 正答率{accuracy}%</span>
+                    )}
                   </span>
                 </div>
               </div>
-              <div className="flex items-center gap-3">
-                {catAnswered > 0 && (
-                  <span className="text-xs text-gray-500 dark:text-gray-400">
-                    {percentage}% 完了 / 正答率 {accuracy}%
-                  </span>
-                )}
-                <div className="w-16 bg-gray-200 dark:bg-gray-700 rounded-full h-1.5">
+              <div className="flex items-center gap-2 shrink-0">
+                <div className="w-12 sm:w-16 bg-gray-200 dark:bg-gray-700 rounded-full h-1.5">
                   <div
-                    className="bg-blue-500 h-1.5 rounded-full"
+                    className="bg-indigo-500 h-1.5 rounded-full"
                     style={{ width: `${percentage}%` }}
                   />
                 </div>
-                <span className="text-gray-400 dark:text-gray-500 text-sm">→</span>
+                <span className="text-gray-400 dark:text-gray-500 text-sm" aria-hidden="true">→</span>
               </div>
             </Link>
           );

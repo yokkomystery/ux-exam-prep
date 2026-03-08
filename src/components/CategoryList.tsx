@@ -32,7 +32,7 @@ export function CategoryList({
           <Link
             key={cat.id}
             href={`${basePath}/${cat.id}`}
-            className="flex items-center justify-between p-4 bg-white rounded-lg border border-gray-200 hover:border-blue-300 hover:shadow-sm transition-all"
+            className="flex items-center justify-between p-4 bg-white rounded-lg border border-gray-200 hover:border-indigo-300 hover:shadow-sm transition-all"
           >
             <div className="flex items-center gap-3">
               <span
@@ -47,7 +47,7 @@ export function CategoryList({
                 <div className="flex items-center gap-2">
                   <div className="w-20 bg-gray-200 rounded-full h-1.5">
                     <div
-                      className="bg-blue-500 h-1.5 rounded-full"
+                      className="bg-indigo-500 h-1.5 rounded-full"
                       style={{ width: `${percentage}%` }}
                     />
                   </div>

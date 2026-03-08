@@ -46,16 +46,16 @@ export function QuizCard({
 
   return (
     <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden">
-      <div className="bg-blue-50 dark:bg-blue-900/30 px-4 sm:px-6 py-3 border-b border-blue-100 dark:border-blue-800">
+      <div className="bg-indigo-50 dark:bg-indigo-900/30 px-4 sm:px-6 py-3 border-b border-indigo-100 dark:border-indigo-800">
         <div className="flex flex-wrap justify-between items-center gap-2">
-          <span className="text-sm font-medium text-blue-700 dark:text-blue-300">
+          <span className="text-sm font-medium text-indigo-700 dark:text-indigo-300">
             問題 {questionNumber} / {totalQuestions}
           </span>
           <div className="flex items-center gap-2">
             <span className={`text-xs font-medium px-2 py-0.5 rounded ${diff.style}`}>
               {diff.text}
             </span>
-            <span className="text-xs text-blue-500 dark:text-blue-400 bg-blue-100 dark:bg-blue-800 px-2 py-1 rounded-full truncate max-w-[160px]">
+            <span className="text-xs text-indigo-500 dark:text-indigo-400 bg-indigo-100 dark:bg-indigo-800 px-2 py-1 rounded-full truncate max-w-[160px]">
               {question.category}
             </span>
           </div>
@@ -71,7 +71,7 @@ export function QuizCard({
           {question.options.map((option, index) => {
             let style = "border-gray-200 dark:border-gray-600";
             if (!answered) {
-              style += " hover:border-blue-300 dark:hover:border-blue-500 hover:bg-blue-50 dark:hover:bg-blue-900/20 active:bg-blue-100 dark:active:bg-blue-900/30";
+              style += " hover:border-indigo-300 dark:hover:border-indigo-500 hover:bg-indigo-50 dark:hover:bg-indigo-900/20 active:bg-indigo-100 dark:active:bg-indigo-900/30";
             } else if (index === question.correctIndex) {
               style = "border-green-500 bg-green-50 dark:bg-green-900/30";
             } else if (index === selectedIndex) {
@@ -147,7 +147,7 @@ export function QuizCard({
 
             <button
               onClick={handleNext}
-              className="w-full bg-blue-600 text-white py-3 rounded-lg font-medium hover:bg-blue-700 active:bg-blue-800 active:scale-[0.98] transition-all min-h-[48px]"
+              className="w-full bg-indigo-600 text-white py-3 rounded-lg font-medium hover:bg-indigo-700 active:bg-indigo-800 active:scale-[0.98] transition-all min-h-[48px]"
             >
               {isLast ? "結果を見る" : "次の問題へ"}
             </button>

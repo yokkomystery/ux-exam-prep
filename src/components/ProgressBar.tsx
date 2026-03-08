@@ -2,14 +2,15 @@ type ProgressBarProps = {
   value: number;
   max: number;
   label?: string;
-  color?: "blue" | "green" | "orange" | "red";
+  color?: "blue" | "green" | "teal" | "red" | "indigo";
 };
 
 const colorMap = {
-  blue: "bg-blue-500",
-  green: "bg-green-500",
-  orange: "bg-orange-500",
-  red: "bg-red-500",
+  blue: "bg-indigo-500",
+  green: "bg-emerald-500",
+  teal: "bg-teal-500",
+  red: "bg-rose-500",
+  indigo: "bg-indigo-500",
 };
 
 export function ProgressBar({
@@ -30,7 +31,14 @@ export function ProgressBar({
           </span>
         </div>
       )}
-      <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2.5">
+      <div
+        className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2.5"
+        role="progressbar"
+        aria-valuenow={value}
+        aria-valuemin={0}
+        aria-valuemax={max}
+        aria-label={label || `進捗 ${percentage}%`}
+      >
         <div
           className={`${colorMap[color]} h-2.5 rounded-full transition-all duration-300`}
           style={{ width: `${percentage}%` }}

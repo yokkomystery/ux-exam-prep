@@ -51,7 +51,7 @@ export function Header() {
       <header className="hidden md:block bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 sticky top-0 z-50">
         <div className="max-w-4xl mx-auto px-4">
           <div className="flex items-center justify-between h-14">
-            <Link href="/" className="font-bold text-lg text-blue-600 dark:text-blue-400">
+            <Link href="/" className="font-bold text-lg text-indigo-600 dark:text-indigo-400">
               UX検定基礎
             </Link>
             <nav className="flex gap-1" aria-label="メインナビゲーション">
@@ -64,9 +64,9 @@ export function Header() {
                   <Link
                     key={item.href}
                     href={item.href}
-                    className={`px-3 py-2 rounded-lg text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 ${
+                    className={`px-3 py-2 rounded-lg text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 ${
                       isActive
-                        ? "bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300"
+                        ? "bg-indigo-50 dark:bg-indigo-900/30 text-indigo-700 dark:text-indigo-300"
                         : "text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 hover:bg-gray-50 dark:hover:bg-gray-700"
                     }`}
                   >
@@ -82,7 +82,7 @@ export function Header() {
       {/* Mobile header (title only) */}
       <header className="md:hidden bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 sticky top-0 z-50 pt-[env(safe-area-inset-top)]">
         <div className="px-4 h-12 flex items-center">
-          <Link href="/" className="font-bold text-lg text-blue-600 dark:text-blue-400">
+          <Link href="/" className="font-bold text-lg text-indigo-600 dark:text-indigo-400">
             UX検定基礎
           </Link>
         </div>
@@ -103,9 +103,9 @@ export function Header() {
               <Link
                 key={item.href}
                 href={item.href}
-                className={`flex flex-col items-center justify-center min-w-[64px] min-h-[44px] py-1 px-2 rounded-lg transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 ${
+                className={`flex flex-col items-center justify-center min-w-[64px] min-h-[44px] py-1 px-2 rounded-lg transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 ${
                   isActive
-                    ? "text-blue-600 dark:text-blue-400"
+                    ? "text-indigo-600 dark:text-indigo-400"
                     : "text-gray-500 dark:text-gray-400"
                 }`}
               >
