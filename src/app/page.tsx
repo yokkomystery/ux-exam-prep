@@ -24,7 +24,7 @@ export default function Dashboard() {
   if (!isLoaded) {
     return (
       <div className="flex justify-center items-center min-h-[50vh]">
-        <div className="animate-pulse text-gray-400">読み込み中...</div>
+        <div className="animate-pulse text-gray-400 dark:text-gray-500">読み込み中...</div>
       </div>
     );
   }
@@ -32,33 +32,33 @@ export default function Dashboard() {
   return (
     <div className="space-y-8">
       <div>
-        <h1 className="text-2xl font-bold text-gray-900">UX検定基礎 対策</h1>
-        <p className="text-gray-500 mt-1">第12回 UX検定基礎試験に向けた学習ダッシュボード</p>
+        <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">UX検定基礎 対策</h1>
+        <p className="text-gray-500 dark:text-gray-400 mt-1">第12回 UX検定基礎試験に向けた学習ダッシュボード</p>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <div className="bg-white rounded-xl p-5 border border-gray-200 shadow-sm">
-          <div className="text-sm text-gray-500 mb-1">クイズ進捗</div>
-          <div className="text-3xl font-bold text-blue-600">
-            {answeredCount}<span className="text-lg text-gray-400">/{totalQuestions}</span>
+        <div className="bg-white dark:bg-gray-800 rounded-xl p-5 border border-gray-200 dark:border-gray-700 shadow-sm">
+          <div className="text-sm text-gray-500 dark:text-gray-400 mb-1">クイズ進捗</div>
+          <div className="text-3xl font-bold text-blue-600 dark:text-blue-400">
+            {answeredCount}<span className="text-lg text-gray-400 dark:text-gray-500">/{totalQuestions}</span>
           </div>
           <ProgressBar value={answeredCount} max={totalQuestions} color="blue" />
         </div>
 
-        <div className="bg-white rounded-xl p-5 border border-gray-200 shadow-sm">
-          <div className="text-sm text-gray-500 mb-1">正答率</div>
-          <div className="text-3xl font-bold text-green-600">
-            {accuracy}<span className="text-lg text-gray-400">%</span>
+        <div className="bg-white dark:bg-gray-800 rounded-xl p-5 border border-gray-200 dark:border-gray-700 shadow-sm">
+          <div className="text-sm text-gray-500 dark:text-gray-400 mb-1">正答率</div>
+          <div className="text-3xl font-bold text-green-600 dark:text-green-400">
+            {accuracy}<span className="text-lg text-gray-400 dark:text-gray-500">%</span>
           </div>
-          <div className="text-xs text-gray-400 mt-1">
+          <div className="text-xs text-gray-400 dark:text-gray-500 mt-1">
             正解 {correctCount} / 不正解 {wrongCount}
           </div>
         </div>
 
-        <div className="bg-white rounded-xl p-5 border border-gray-200 shadow-sm">
-          <div className="text-sm text-gray-500 mb-1">キーワード学習</div>
-          <div className="text-3xl font-bold text-orange-500">
-            {learnedCount}<span className="text-lg text-gray-400">/{totalKeywords}</span>
+        <div className="bg-white dark:bg-gray-800 rounded-xl p-5 border border-gray-200 dark:border-gray-700 shadow-sm">
+          <div className="text-sm text-gray-500 dark:text-gray-400 mb-1">キーワード学習</div>
+          <div className="text-3xl font-bold text-orange-500 dark:text-orange-400">
+            {learnedCount}<span className="text-lg text-gray-400 dark:text-gray-500">/{totalKeywords}</span>
           </div>
           <ProgressBar value={learnedCount} max={totalKeywords} color="orange" />
         </div>
@@ -87,20 +87,20 @@ export default function Dashboard() {
       {wrongCount > 0 && (
         <Link
           href="/review"
-          className="flex items-center justify-between p-5 bg-red-50 border border-red-200 rounded-xl hover:bg-red-100 transition-colors"
+          className="flex items-center justify-between p-5 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-xl hover:bg-red-100 dark:hover:bg-red-900/30 transition-colors"
         >
           <div>
-            <span className="font-bold text-red-700">間違えた問題を復習</span>
-            <span className="text-red-500 text-sm ml-2">
+            <span className="font-bold text-red-700 dark:text-red-300">間違えた問題を復習</span>
+            <span className="text-red-500 dark:text-red-400 text-sm ml-2">
               {wrongCount}問
             </span>
           </div>
-          <span className="text-red-400">→</span>
+          <span className="text-red-400 dark:text-red-500">→</span>
         </Link>
       )}
 
       <div>
-        <h2 className="text-lg font-bold text-gray-900 mb-3">カテゴリ別進捗</h2>
+        <h2 className="text-lg font-bold text-gray-900 dark:text-gray-100 mb-3">カテゴリ別進捗</h2>
         <div className="space-y-2">
           {categories.map((cat) => {
             const catQuestions = questions.filter((q) =>
@@ -120,13 +120,13 @@ export default function Dashboard() {
             return (
               <div
                 key={cat.id}
-                className="flex items-center gap-4 p-3 bg-white rounded-lg border border-gray-100"
+                className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-4 p-3 bg-white dark:bg-gray-800 rounded-lg border border-gray-100 dark:border-gray-700"
               >
-                <span className="text-sm font-medium text-gray-700 w-48 shrink-0">
+                <span className="text-sm font-medium text-gray-700 dark:text-gray-300 sm:w-48 sm:shrink-0 truncate">
                   {cat.name}
                 </span>
-                <div className="flex-1">
-                  <div className="w-full bg-gray-200 rounded-full h-1.5">
+                <div className="flex items-center gap-2 w-full sm:flex-1">
+                  <div className="flex-1 bg-gray-200 dark:bg-gray-700 rounded-full h-1.5">
                     <div
                       className="bg-blue-500 h-1.5 rounded-full transition-all"
                       style={{
@@ -138,11 +138,11 @@ export default function Dashboard() {
                       }}
                     />
                   </div>
+                  <span className="text-xs text-gray-500 dark:text-gray-400 shrink-0">
+                    {catAnswered}/{catQuestions.length}問{" "}
+                    {catAnswered > 0 && `(${catAccuracy}%)`}
+                  </span>
                 </div>
-                <span className="text-xs text-gray-500 w-24 text-right">
-                  {catAnswered}/{catQuestions.length}問{" "}
-                  {catAnswered > 0 && `(${catAccuracy}%)`}
-                </span>
               </div>
             );
           })}

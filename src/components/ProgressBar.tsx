@@ -24,13 +24,13 @@ export function ProgressBar({
     <div className="w-full">
       {label && (
         <div className="flex justify-between text-sm mb-1">
-          <span className="text-gray-600">{label}</span>
-          <span className="text-gray-500">
+          <span className="text-gray-600 dark:text-gray-400">{label}</span>
+          <span className="text-gray-500 dark:text-gray-400">
             {value}/{max} ({percentage}%)
           </span>
         </div>
       )}
-      <div className="w-full bg-gray-200 rounded-full h-2.5">
+      <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2.5">
         <div
           className={`${colorMap[color]} h-2.5 rounded-full transition-all duration-300`}
           style={{ width: `${percentage}%` }}

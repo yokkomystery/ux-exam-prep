@@ -1,12 +1,14 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useCallback } from "react";
 import { useParams } from "next/navigation";
 import Link from "next/link";
 import { QuizCard } from "@/components/QuizCard";
+import { Timer } from "@/components/Timer";
 import { useProgress } from "@/hooks/useProgress";
 import { categories } from "@/lib/categories";
 import { questions as allQuestions } from "@/data/questions";
+import { Question } from "@/lib/types";
 
 function shuffleArray<T>(array: T[]): T[] {
   const shuffled = [...array];
@@ -17,15 +19,14 @@ function shuffleArray<T>(array: T[]): T[] {
   return shuffled;
 }
 
+type AnswerRecord = { id: string; correct: boolean; question: Question };
+
 export default function QuizPage() {
   const params = useParams();
   const categoryId = params.category as string;
   const { answerQuestion, isLoaded } = useProgress();
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [results, setResults] = useState<{ correct: number; wrong: number }>({
-    correct: 0,
-    wrong: 0,
-  });
+  const [answers, setAnswers] = useState<AnswerRecord[]>([]);
   const [isFinished, setIsFinished] = useState(false);
 
   const questions = useMemo(() => {
@@ -33,7 +34,7 @@ export default function QuizPage() {
       return shuffleArray(allQuestions);
     }
     if (categoryId === "random") {
-      return shuffleArray(allQuestions).slice(0, 20);
+      return shuffleArray(allQuestions).slice(0, 10);
     }
     const cat = categories.find((c) => c.id === categoryId);
     if (!cat) return [];
@@ -50,13 +51,19 @@ export default function QuizPage() {
     categoryId === "all"
       ? "全問チャレンジ"
       : categoryId === "random"
-      ? "ランダム20問"
+      ? "ランダム10問"
       : categories.find((c) => c.id === categoryId)?.name ?? "不明";
+
+  const showTimer = categoryId === "all";
+
+  const handleFinish = useCallback(() => {
+    setIsFinished(true);
+  }, []);
 
   if (!isLoaded) {
     return (
       <div className="flex justify-center items-center min-h-[50vh]">
-        <div className="animate-pulse text-gray-400">読み込み中...</div>
+        <div className="animate-pulse text-gray-400 dark:text-gray-500">読み込み中...</div>
       </div>
     );
   }
@@ -64,8 +71,8 @@ export default function QuizPage() {
   if (questions.length === 0) {
     return (
       <div className="text-center py-20">
-        <p className="text-gray-500">このカテゴリに問題がありません</p>
-        <Link href="/quiz" className="text-blue-600 mt-4 inline-block">
+        <p className="text-gray-500 dark:text-gray-400">このカテゴリに問題がありません</p>
+        <Link href="/quiz" className="text-blue-600 dark:text-blue-400 mt-4 inline-block">
           ← カテゴリ選択に戻る
         </Link>
       </div>
@@ -73,13 +80,42 @@ export default function QuizPage() {
   }
 
   if (isFinished) {
-    const total = results.correct + results.wrong;
-    const accuracy = Math.round((results.correct / total) * 100);
+    const correct = answers.filter((a) => a.correct).length;
+    const wrong = answers.filter((a) => !a.correct).length;
+    const total = answers.length;
+    const accuracy = total > 0 ? Math.round((correct / total) * 100) : 0;
+
+    // 分野別正答率を計算
+    const categoryStats: Record<string, { correct: number; total: number }> = {};
+    for (const a of answers) {
+      const cat = a.question.category;
+      if (!categoryStats[cat]) categoryStats[cat] = { correct: 0, total: 0 };
+      categoryStats[cat].total++;
+      if (a.correct) categoryStats[cat].correct++;
+    }
+    const sortedCategories = Object.entries(categoryStats).sort(
+      ([, a], [, b]) => (a.correct / a.total) - (b.correct / b.total)
+    );
+
+    // 難易度別正答率
+    const diffStats: Record<string, { correct: number; total: number }> = {};
+    for (const a of answers) {
+      const d = a.question.difficulty;
+      if (!diffStats[d]) diffStats[d] = { correct: 0, total: 0 };
+      diffStats[d].total++;
+      if (a.correct) diffStats[d].correct++;
+    }
+
+    // 弱点分野（正答率60%未満）
+    const weakCategories = sortedCategories.filter(
+      ([, s]) => s.total >= 2 && (s.correct / s.total) < 0.6
+    );
+
     return (
       <div className="space-y-6">
-        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-8 text-center">
-          <h2 className="text-2xl font-bold text-gray-900 mb-2">結果発表</h2>
-          <p className="text-gray-500 mb-6">{categoryName}</p>
+        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-8 text-center">
+          <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-2">結果発表</h2>
+          <p className="text-gray-500 dark:text-gray-400 mb-6">{categoryName}</p>
 
           <div className="text-6xl font-bold mb-4">
             <span className={accuracy >= 70 ? "text-green-600" : "text-red-600"}>
@@ -89,47 +125,110 @@ export default function QuizPage() {
 
           <div className="flex justify-center gap-8 mb-6">
             <div>
-              <div className="text-2xl font-bold text-green-600">
-                {results.correct}
-              </div>
-              <div className="text-sm text-gray-500">正解</div>
+              <div className="text-2xl font-bold text-green-600">{correct}</div>
+              <div className="text-sm text-gray-500 dark:text-gray-400">正解</div>
             </div>
             <div>
-              <div className="text-2xl font-bold text-red-600">
-                {results.wrong}
-              </div>
-              <div className="text-sm text-gray-500">不正解</div>
+              <div className="text-2xl font-bold text-red-600">{wrong}</div>
+              <div className="text-sm text-gray-500 dark:text-gray-400">不正解</div>
             </div>
             <div>
-              <div className="text-2xl font-bold text-gray-600">{total}</div>
-              <div className="text-sm text-gray-500">合計</div>
+              <div className="text-2xl font-bold text-gray-600 dark:text-gray-300">{total}</div>
+              <div className="text-sm text-gray-500 dark:text-gray-400">合計</div>
             </div>
           </div>
 
           {accuracy >= 80 ? (
             <p className="text-green-600 font-medium">素晴らしい！合格圏内だぜ！</p>
           ) : accuracy >= 60 ? (
-            <p className="text-yellow-600 font-medium">
-              もう少し！間違えた問題を復習しよう！
-            </p>
+            <p className="text-yellow-600 font-medium">もう少し！間違えた問題を復習しよう！</p>
           ) : (
-            <p className="text-red-600 font-medium">
-              頑張ろう！キーワードを見直してから再挑戦だ！
-            </p>
+            <p className="text-red-600 font-medium">頑張ろう！キーワードを見直してから再挑戦だ！</p>
           )}
         </div>
+
+        {/* 難易度別正答率 */}
+        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6">
+          <h3 className="text-lg font-bold text-gray-900 dark:text-gray-100 mb-4">難易度別正答率</h3>
+          <div className="space-y-3">
+            {(["basic", "standard", "advanced"] as const).map((d) => {
+              const s = diffStats[d];
+              if (!s) return null;
+              const pct = Math.round((s.correct / s.total) * 100);
+              const label = d === "basic" ? "基本" : d === "standard" ? "標準" : "応用";
+              return (
+                <div key={d} className="flex items-center gap-3">
+                  <span className="text-sm text-gray-700 dark:text-gray-300 w-12">{label}</span>
+                  <div className="flex-1 bg-gray-200 dark:bg-gray-700 rounded-full h-2">
+                    <div
+                      className={`h-2 rounded-full ${pct >= 70 ? "bg-green-500" : pct >= 50 ? "bg-yellow-500" : "bg-red-500"}`}
+                      style={{ width: `${pct}%` }}
+                    />
+                  </div>
+                  <span className="text-sm text-gray-600 dark:text-gray-400 w-16 text-right">
+                    {pct}% ({s.correct}/{s.total})
+                  </span>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+
+        {/* 分野別正答率 */}
+        {Object.keys(categoryStats).length > 1 && (
+          <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6">
+            <h3 className="text-lg font-bold text-gray-900 dark:text-gray-100 mb-4">分野別正答率</h3>
+            <div className="space-y-3">
+              {sortedCategories.map(([cat, s]) => {
+                const pct = Math.round((s.correct / s.total) * 100);
+                return (
+                  <div key={cat} className="flex items-center gap-3">
+                    <span className="text-sm text-gray-700 dark:text-gray-300 w-40 shrink-0 truncate">{cat}</span>
+                    <div className="flex-1 bg-gray-200 dark:bg-gray-700 rounded-full h-2">
+                      <div
+                        className={`h-2 rounded-full ${pct >= 70 ? "bg-green-500" : pct >= 50 ? "bg-yellow-500" : "bg-red-500"}`}
+                        style={{ width: `${pct}%` }}
+                      />
+                    </div>
+                    <span className="text-sm text-gray-600 dark:text-gray-400 w-16 text-right">
+                      {pct}% ({s.correct}/{s.total})
+                    </span>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        )}
+
+        {/* 弱点分野アドバイス */}
+        {weakCategories.length > 0 && (
+          <div className="bg-amber-50 dark:bg-amber-900/20 rounded-xl border border-amber-200 dark:border-amber-800 p-6">
+            <h3 className="text-lg font-bold text-amber-800 dark:text-amber-300 mb-3">弱点分野のアドバイス</h3>
+            <ul className="space-y-2">
+              {weakCategories.map(([cat, s]) => {
+                const pct = Math.round((s.correct / s.total) * 100);
+                return (
+                  <li key={cat} className="text-sm text-amber-700 dark:text-amber-200">
+                    <span className="font-medium">{cat}</span>（正答率{pct}%）
+                    — キーワードの定義を重点的に復習しよう
+                  </li>
+                );
+              })}
+            </ul>
+          </div>
+        )}
 
         <div className="flex gap-4">
           <Link
             href="/quiz"
-            className="flex-1 text-center py-3 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors font-medium"
+            className="flex-1 text-center py-3 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-200 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors font-medium"
           >
             カテゴリ選択に戻る
           </Link>
           <button
             onClick={() => {
               setCurrentIndex(0);
-              setResults({ correct: 0, wrong: 0 });
+              setAnswers([]);
               setIsFinished(false);
             }}
             className="flex-1 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium"
@@ -137,10 +236,10 @@ export default function QuizPage() {
             もう一度挑戦
           </button>
         </div>
-        {results.wrong > 0 && (
+        {wrong > 0 && (
           <Link
             href="/review"
-            className="block text-center py-3 bg-red-50 text-red-700 border border-red-200 rounded-lg hover:bg-red-100 transition-colors font-medium"
+            className="block text-center py-3 bg-red-50 dark:bg-red-900/20 text-red-700 dark:text-red-300 border border-red-200 dark:border-red-800 rounded-lg hover:bg-red-100 dark:hover:bg-red-900/30 transition-colors font-medium"
           >
             間違えた問題を復習する
           </Link>
@@ -153,19 +252,22 @@ export default function QuizPage() {
 
   return (
     <div className="space-y-4">
-      <div className="flex items-center justify-between">
+      <div className="flex flex-wrap items-center justify-between gap-2">
         <Link
           href="/quiz"
-          className="text-sm text-gray-500 hover:text-gray-700"
+          className="text-sm text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 min-h-[44px] inline-flex items-center"
         >
           ← {categoryName}
         </Link>
-        <div className="text-sm text-gray-500">
-          正解 {results.correct} / 不正解 {results.wrong}
+        <div className="flex items-center gap-2 sm:gap-4">
+          {showTimer && <Timer durationMinutes={100} onTimeUp={handleFinish} />}
+          <div className="text-xs sm:text-sm text-gray-500 dark:text-gray-400 whitespace-nowrap">
+            正解 {answers.filter((a) => a.correct).length} / 不正解 {answers.filter((a) => !a.correct).length}
+          </div>
         </div>
       </div>
 
-      <div className="w-full bg-gray-200 rounded-full h-1">
+      <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-1">
         <div
           className="bg-blue-500 h-1 rounded-full transition-all"
           style={{
@@ -181,10 +283,7 @@ export default function QuizPage() {
         totalQuestions={questions.length}
         onAnswer={(id, correct) => {
           answerQuestion(id, correct);
-          setResults((prev) => ({
-            correct: prev.correct + (correct ? 1 : 0),
-            wrong: prev.wrong + (correct ? 0 : 1),
-          }));
+          setAnswers((prev) => [...prev, { id, correct, question: currentQuestion }]);
         }}
         onNext={() => {
           if (currentIndex + 1 >= questions.length) {

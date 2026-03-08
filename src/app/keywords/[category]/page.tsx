@@ -59,7 +59,7 @@ export default function KeywordPage() {
   if (!isLoaded) {
     return (
       <div className="flex justify-center items-center min-h-[50vh]">
-        <div className="animate-pulse text-gray-400">読み込み中...</div>
+        <div className="animate-pulse text-gray-400 dark:text-gray-500">読み込み中...</div>
       </div>
     );
   }
@@ -70,14 +70,14 @@ export default function KeywordPage() {
         <div>
           <Link
             href="/keywords"
-            className="text-sm text-gray-500 hover:text-gray-700"
+            className="text-sm text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200"
           >
             ← キーワード一覧
           </Link>
-          <h1 className="text-2xl font-bold text-gray-900 mt-1">
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mt-1">
             {categoryName}
           </h1>
-          <p className="text-gray-500 text-sm">
+          <p className="text-gray-500 dark:text-gray-400 text-sm">
             {learnedForCategory}/{totalForCategory} 覚えた
           </p>
         </div>
@@ -91,7 +91,7 @@ export default function KeywordPage() {
             className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
               filter === f
                 ? "bg-orange-500 text-white"
-                : "bg-white text-gray-600 border border-gray-200 hover:bg-gray-50"
+                : "bg-white dark:bg-gray-800 text-gray-600 dark:text-gray-400 border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700"
             }`}
           >
             {f === "all" ? "すべて" : f === "unlearned" ? "未学習" : "覚えた"}
@@ -100,7 +100,7 @@ export default function KeywordPage() {
       </div>
 
       {filteredKeywords.length === 0 ? (
-        <div className="text-center py-12 text-gray-400">
+        <div className="text-center py-12 text-gray-400 dark:text-gray-500">
           {filter === "learned"
             ? "まだ覚えたキーワードがありません"
             : filter === "unlearned"

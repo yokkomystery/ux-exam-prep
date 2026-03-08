@@ -1,3 +1,5 @@
+export type Difficulty = "basic" | "standard" | "advanced";
+
 export type Question = {
   id: string;
   category: string;
@@ -6,6 +8,9 @@ export type Question = {
   options: [string, string, string, string];
   correctIndex: number;
   explanation: string;
+  difficulty: Difficulty;
+  pitfall: string;
+  relatedKeywords: string[];
 };
 
 export type Keyword = {
