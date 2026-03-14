@@ -29,28 +29,34 @@ export default function QuizPage() {
   const [answers, setAnswers] = useState<AnswerRecord[]>([]);
   const [isFinished, setIsFinished] = useState(false);
 
-  const questions = useMemo(() => {
+  const baseQuestions = useMemo(() => {
+    const cat = categories.find((c) => c.id === categoryId);
+    if (!cat) return [];
+    return allQuestions.filter((q) =>
+      cat.subcategories.some(
+        (sub) => q.subcategory === sub || q.category === cat.name
+      )
+    );
+  }, [categoryId]);
+
+  const fixedQuestions = useMemo(() => {
     if (categoryId === "all") {
       return shuffleArray(allQuestions);
-    }
-    if (categoryId === "unanswered") {
-      return shuffleArray(
-        allQuestions.filter((q) => !progress.quiz.answeredQuestions[q.id])
-      );
     }
     if (categoryId === "random") {
       return shuffleArray(allQuestions).slice(0, 10);
     }
-    const cat = categories.find((c) => c.id === categoryId);
-    if (!cat) return [];
+    return shuffleArray(baseQuestions);
+  }, [baseQuestions, categoryId]);
+
+  const questions = useMemo(() => {
+    if (categoryId !== "unanswered") {
+      return fixedQuestions;
+    }
     return shuffleArray(
-      allQuestions.filter((q) =>
-        cat.subcategories.some(
-          (sub) => q.subcategory === sub || q.category === cat.name
-        )
-      )
+      allQuestions.filter((q) => !progress.quiz.answeredQuestions[q.id])
     );
-  }, [categoryId, progress.quiz.answeredQuestions]);
+  }, [categoryId, fixedQuestions, progress.quiz.answeredQuestions]);
 
   const categoryName =
     categoryId === "all"
