@@ -15,26 +15,37 @@ const defaultProgress: Progress = {
   },
 };
 
+let cachedProgress: Progress = defaultProgress;
+
+function normalizeProgress(progress: Progress): Progress {
+  if (!progress.quiz.everWrongQuestions) {
+    progress.quiz.everWrongQuestions = Object.entries(progress.quiz.answeredQuestions)
+      .filter(([, v]) => !v.correct)
+      .map(([id]) => id);
+  }
+  return progress;
+}
+
 export function getProgress(): Progress {
   if (typeof window === "undefined") return defaultProgress;
   try {
     const data = localStorage.getItem(STORAGE_KEY);
-    if (!data) return defaultProgress;
-    const parsed = JSON.parse(data) as Progress;
-    if (!parsed.quiz.everWrongQuestions) {
-      parsed.quiz.everWrongQuestions = Object.entries(parsed.quiz.answeredQuestions)
-        .filter(([, v]) => !v.correct)
-        .map(([id]) => id);
+    if (!data) {
+      cachedProgress = defaultProgress;
+      return cachedProgress;
     }
-    return parsed;
+    cachedProgress = normalizeProgress(JSON.parse(data) as Progress);
+    return cachedProgress;
   } catch {
-    return defaultProgress;
+    cachedProgress = defaultProgress;
+    return cachedProgress;
   }
 }
 
 export function saveProgress(progress: Progress): void {
   if (typeof window === "undefined") return;
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(progress));
+  cachedProgress = normalizeProgress(progress);
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(cachedProgress));
   window.dispatchEvent(new Event(STORAGE_EVENT));
 }
 
@@ -115,6 +126,7 @@ export function getEverWrongQuestionIds(): string[] {
 
 export function resetProgress(): void {
   if (typeof window === "undefined") return;
+  cachedProgress = defaultProgress;
   localStorage.removeItem(STORAGE_KEY);
   window.dispatchEvent(new Event(STORAGE_EVENT));
 }
