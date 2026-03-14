@@ -16,6 +16,7 @@ const defaultProgress: Progress = {
 };
 
 let cachedProgress: Progress = defaultProgress;
+let cachedSerializedProgress: string | null = null;
 
 function normalizeProgress(progress: Progress): Progress {
   if (!progress.quiz.everWrongQuestions) {
@@ -31,12 +32,20 @@ export function getProgress(): Progress {
   try {
     const data = localStorage.getItem(STORAGE_KEY);
     if (!data) {
+      cachedSerializedProgress = null;
       cachedProgress = defaultProgress;
       return cachedProgress;
     }
+
+    if (data === cachedSerializedProgress) {
+      return cachedProgress;
+    }
+
+    cachedSerializedProgress = data;
     cachedProgress = normalizeProgress(JSON.parse(data) as Progress);
     return cachedProgress;
   } catch {
+    cachedSerializedProgress = null;
     cachedProgress = defaultProgress;
     return cachedProgress;
   }
@@ -45,7 +54,8 @@ export function getProgress(): Progress {
 export function saveProgress(progress: Progress): void {
   if (typeof window === "undefined") return;
   cachedProgress = normalizeProgress(progress);
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(cachedProgress));
+  cachedSerializedProgress = JSON.stringify(cachedProgress);
+  localStorage.setItem(STORAGE_KEY, cachedSerializedProgress);
   window.dispatchEvent(new Event(STORAGE_EVENT));
 }
 
@@ -126,6 +136,7 @@ export function getEverWrongQuestionIds(): string[] {
 
 export function resetProgress(): void {
   if (typeof window === "undefined") return;
+  cachedSerializedProgress = null;
   cachedProgress = defaultProgress;
   localStorage.removeItem(STORAGE_KEY);
   window.dispatchEvent(new Event(STORAGE_EVENT));
