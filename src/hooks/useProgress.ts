@@ -1,7 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
-import { Progress } from "@/lib/types";
+import { useCallback, useSyncExternalStore } from "react";
 import {
   getProgress,
   recordQuizAnswer,
@@ -16,46 +15,60 @@ const defaultProgress: Progress = {
   keywords: { learnedKeywords: [], bookmarkedKeywords: [] },
 };
 
-export function useProgress() {
-  const [progress, setProgress] = useState<Progress>(defaultProgress);
-  const [isLoaded, setIsLoaded] = useState(false);
+function subscribeToProgress(onStoreChange: () => void) {
+  if (typeof window === "undefined") {
+    return () => {};
+  }
 
-  useEffect(() => {
-    setProgress(getProgress());
-    setIsLoaded(true);
-  }, []);
+  const handleProgressChange = () => onStoreChange();
+  const handleStorage = (event: StorageEvent) => {
+    if (event.key === "ux-exam-progress") {
+      onStoreChange();
+    }
+  };
+
+  window.addEventListener("ux-exam-progress-change", handleProgressChange);
+  window.addEventListener("storage", handleStorage);
+
+  return () => {
+    window.removeEventListener("ux-exam-progress-change", handleProgressChange);
+    window.removeEventListener("storage", handleStorage);
+  };
+}
+
+export function useProgress() {
+  const progress = useSyncExternalStore(
+    subscribeToProgress,
+    getProgress,
+    () => defaultProgress
+  );
 
   const answerQuestion = useCallback(
     (questionId: string, correct: boolean) => {
-      const updated = recordQuizAnswer(questionId, correct);
-      setProgress({ ...updated });
+      recordQuizAnswer(questionId, correct);
     },
     []
   );
 
   const toggleQuestionBookmark = useCallback((questionId: string) => {
-    const updated = toggleBookmarkQuestion(questionId);
-    setProgress({ ...updated });
+    toggleBookmarkQuestion(questionId);
   }, []);
 
   const toggleKeywordLearned = useCallback((keywordId: string) => {
-    const updated = toggleLearnedKeyword(keywordId);
-    setProgress({ ...updated });
+    toggleLearnedKeyword(keywordId);
   }, []);
 
   const toggleKeywordBookmark = useCallback((keywordId: string) => {
-    const updated = toggleBookmarkKeyword(keywordId);
-    setProgress({ ...updated });
+    toggleBookmarkKeyword(keywordId);
   }, []);
 
   const reset = useCallback(() => {
     resetProgress();
-    setProgress(defaultProgress);
   }, []);
 
   return {
     progress,
-    isLoaded,
+    isLoaded: true,
     answerQuestion,
     toggleQuestionBookmark,
     toggleKeywordLearned,

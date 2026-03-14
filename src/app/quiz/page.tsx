@@ -16,6 +16,10 @@ export default function QuizCategoryPage() {
     );
   }
 
+  const unansweredCount = questions.filter(
+    (q) => !progress.quiz.answeredQuestions[q.id]
+  ).length;
+
   return (
     <div className="space-y-6">
       <div>
@@ -47,6 +51,26 @@ export default function QuizCategoryPage() {
           </span>
         </div>
         <span className="text-violet-200 text-xl" aria-hidden="true">→</span>
+      </Link>
+
+      <Link
+        href="/quiz/unanswered"
+        className={`flex items-center justify-between p-5 rounded-xl transition-colors ${
+          unansweredCount > 0
+            ? "bg-emerald-600 text-white hover:bg-emerald-700 active:bg-emerald-800"
+            : "bg-gray-200 dark:bg-gray-800 text-gray-500 dark:text-gray-400"
+        }`}
+        aria-disabled={unansweredCount === 0}
+      >
+        <div>
+          <span className="font-bold text-lg block">未回答だけを解く</span>
+          <span className={unansweredCount > 0 ? "text-emerald-100 text-sm" : "text-gray-400 dark:text-gray-500 text-sm"}>
+            {unansweredCount > 0
+              ? `まだ解いていない ${unansweredCount} 問に絞って出題`
+              : "全問回答済みです"}
+          </span>
+        </div>
+        <span className={unansweredCount > 0 ? "text-emerald-100 text-xl" : "text-gray-400 dark:text-gray-500 text-xl"} aria-hidden="true">→</span>
       </Link>
 
       <div className="space-y-2">

@@ -1,6 +1,7 @@
-import { Progress, QuizProgress, KeywordProgress } from "./types";
+import { Progress } from "./types";
 
 const STORAGE_KEY = "ux-exam-progress";
+const STORAGE_EVENT = "ux-exam-progress-change";
 
 const defaultProgress: Progress = {
   quiz: {
@@ -34,6 +35,7 @@ export function getProgress(): Progress {
 export function saveProgress(progress: Progress): void {
   if (typeof window === "undefined") return;
   localStorage.setItem(STORAGE_KEY, JSON.stringify(progress));
+  window.dispatchEvent(new Event(STORAGE_EVENT));
 }
 
 export function recordQuizAnswer(
@@ -114,4 +116,5 @@ export function getEverWrongQuestionIds(): string[] {
 export function resetProgress(): void {
   if (typeof window === "undefined") return;
   localStorage.removeItem(STORAGE_KEY);
+  window.dispatchEvent(new Event(STORAGE_EVENT));
 }

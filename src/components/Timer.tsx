@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect } from "react";
 
 type TimerProps = {
   durationMinutes: number;
@@ -10,13 +10,12 @@ type TimerProps = {
 export function Timer({ durationMinutes, onTimeUp }: TimerProps) {
   const [remainingSeconds, setRemainingSeconds] = useState(durationMinutes * 60);
 
-  const handleTimeUp = useCallback(onTimeUp, [onTimeUp]);
-
   useEffect(() => {
     if (remainingSeconds <= 0) {
-      handleTimeUp();
+      onTimeUp();
       return;
     }
+
     const timer = setInterval(() => {
       setRemainingSeconds((prev) => {
         if (prev <= 1) {
@@ -26,8 +25,9 @@ export function Timer({ durationMinutes, onTimeUp }: TimerProps) {
         return prev - 1;
       });
     }, 1000);
+
     return () => clearInterval(timer);
-  }, [remainingSeconds <= 0, handleTimeUp]);
+  }, [onTimeUp, remainingSeconds]);
 
   const minutes = Math.floor(remainingSeconds / 60);
   const seconds = remainingSeconds % 60;

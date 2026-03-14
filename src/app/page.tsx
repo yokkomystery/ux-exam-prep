@@ -17,6 +17,7 @@ export default function Dashboard() {
   ).length;
   const wrongCount = answeredCount - correctCount;
   const accuracy = answeredCount > 0 ? Math.round((correctCount / answeredCount) * 100) : 0;
+  const unansweredCount = totalQuestions - answeredCount;
 
   const totalKeywords = keywords.length;
   const learnedCount = progress.keywords.learnedKeywords.length;
@@ -83,6 +84,21 @@ export default function Dashboard() {
           <span className="text-teal-200 text-sm mt-1">フラッシュカードで暗記</span>
         </Link>
       </div>
+
+      {unansweredCount > 0 && (
+        <Link
+          href="/quiz/unanswered"
+          className="flex items-center justify-between p-5 bg-emerald-50 dark:bg-emerald-900/20 border border-emerald-200 dark:border-emerald-800 rounded-xl hover:bg-emerald-100 dark:hover:bg-emerald-900/30 transition-colors"
+        >
+          <div>
+            <span className="font-bold text-emerald-700 dark:text-emerald-300">未回答だけを解く</span>
+            <span className="text-emerald-500 dark:text-emerald-400 text-sm ml-2">
+              残り {unansweredCount}問
+            </span>
+          </div>
+          <span className="text-emerald-400 dark:text-emerald-500" aria-hidden="true">→</span>
+        </Link>
+      )}
 
       {wrongCount > 0 && (
         <Link

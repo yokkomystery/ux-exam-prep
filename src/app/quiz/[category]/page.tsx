@@ -33,6 +33,11 @@ export default function QuizPage() {
     if (categoryId === "all") {
       return shuffleArray(allQuestions);
     }
+    if (categoryId === "unanswered") {
+      return shuffleArray(
+        allQuestions.filter((q) => !progress.quiz.answeredQuestions[q.id])
+      );
+    }
     if (categoryId === "random") {
       return shuffleArray(allQuestions).slice(0, 10);
     }
@@ -45,11 +50,13 @@ export default function QuizPage() {
         )
       )
     );
-  }, [categoryId]);
+  }, [categoryId, progress.quiz.answeredQuestions]);
 
   const categoryName =
     categoryId === "all"
       ? "全問チャレンジ"
+      : categoryId === "unanswered"
+      ? "未回答だけ"
       : categoryId === "random"
       ? "ランダム10問"
       : categories.find((c) => c.id === categoryId)?.name ?? "不明";
@@ -71,7 +78,11 @@ export default function QuizPage() {
   if (questions.length === 0) {
     return (
       <div className="text-center py-20">
-        <p className="text-gray-500 dark:text-gray-400">このカテゴリに問題がありません</p>
+        <p className="text-gray-500 dark:text-gray-400">
+          {categoryId === "unanswered"
+            ? "未回答の問題はありません"
+            : "このカテゴリに問題がありません"}
+        </p>
         <Link href="/quiz" className="text-indigo-600 dark:text-indigo-400 mt-4 inline-block">
           ← カテゴリ選択に戻る
         </Link>
