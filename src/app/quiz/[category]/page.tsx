@@ -21,13 +21,29 @@ function shuffleArray<T>(array: T[]): T[] {
 
 type AnswerRecord = { id: string; correct: boolean; question: Question };
 
+function buildSessionQuestions(
+  categoryId: string,
+  baseQuestions: Question[],
+  answeredQuestions: Record<string, { correct: boolean; answeredAt: number }>
+) {
+  if (categoryId === "all") {
+    return shuffleArray(allQuestions);
+  }
+  if (categoryId === "random") {
+    return shuffleArray(allQuestions).slice(0, 10);
+  }
+  if (categoryId === "unanswered") {
+    return shuffleArray(
+      allQuestions.filter((q) => !answeredQuestions[q.id])
+    );
+  }
+  return shuffleArray(baseQuestions);
+}
+
 export default function QuizPage() {
   const params = useParams();
   const categoryId = params.category as string;
   const { answerQuestion, toggleQuestionBookmark, progress, isLoaded } = useProgress();
-  const [currentIndex, setCurrentIndex] = useState(0);
-  const [answers, setAnswers] = useState<AnswerRecord[]>([]);
-  const [isFinished, setIsFinished] = useState(false);
 
   const baseQuestions = useMemo(() => {
     const cat = categories.find((c) => c.id === categoryId);
@@ -39,24 +55,51 @@ export default function QuizPage() {
     );
   }, [categoryId]);
 
-  const fixedQuestions = useMemo(() => {
-    if (categoryId === "all") {
-      return shuffleArray(allQuestions);
-    }
-    if (categoryId === "random") {
-      return shuffleArray(allQuestions).slice(0, 10);
-    }
-    return shuffleArray(baseQuestions);
-  }, [baseQuestions, categoryId]);
-
-  const questions = useMemo(() => {
-    if (categoryId !== "unanswered") {
-      return fixedQuestions;
-    }
-    return shuffleArray(
-      allQuestions.filter((q) => !progress.quiz.answeredQuestions[q.id])
+  if (!isLoaded) {
+    return (
+      <div className="flex justify-center items-center min-h-[50vh]">
+        <div className="animate-pulse text-gray-400 dark:text-gray-500">読み込み中...</div>
+      </div>
     );
-  }, [categoryId, fixedQuestions, progress.quiz.answeredQuestions]);
+  }
+
+  const questions = buildSessionQuestions(
+    categoryId,
+    baseQuestions,
+    progress.quiz.answeredQuestions
+  );
+
+  return (
+    <QuizSession
+      key={categoryId}
+      categoryId={categoryId}
+      initialQuestions={questions}
+      progress={progress}
+      answerQuestion={answerQuestion}
+      toggleQuestionBookmark={toggleQuestionBookmark}
+    />
+  );
+}
+
+type QuizSessionProps = {
+  categoryId: string;
+  initialQuestions: Question[];
+  progress: ReturnType<typeof useProgress>["progress"];
+  answerQuestion: (questionId: string, correct: boolean) => void;
+  toggleQuestionBookmark: (questionId: string) => void;
+};
+
+function QuizSession({
+  categoryId,
+  initialQuestions,
+  progress,
+  answerQuestion,
+  toggleQuestionBookmark,
+}: QuizSessionProps) {
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [answers, setAnswers] = useState<AnswerRecord[]>([]);
+  const [isFinished, setIsFinished] = useState(false);
+  const [questions] = useState(initialQuestions);
 
   const categoryName =
     categoryId === "all"
@@ -72,14 +115,6 @@ export default function QuizPage() {
   const handleFinish = useCallback(() => {
     setIsFinished(true);
   }, []);
-
-  if (!isLoaded) {
-    return (
-      <div className="flex justify-center items-center min-h-[50vh]">
-        <div className="animate-pulse text-gray-400 dark:text-gray-500">読み込み中...</div>
-      </div>
-    );
-  }
 
   if (questions.length === 0) {
     return (

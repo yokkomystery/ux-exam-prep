@@ -89,6 +89,7 @@ export function QuizCard({
                 key={index}
                 onClick={() => handleSelect(index)}
                 disabled={answered}
+                data-testid={`answer-option-${index}`}
                 className={`w-full text-left p-3 sm:p-4 rounded-lg border-2 transition-all flex gap-3 min-h-[48px] ${style} ${
                   !answered ? "cursor-pointer" : "cursor-default"
                 }`}
@@ -117,6 +118,7 @@ export function QuizCard({
         {answered && (
           <div className="mt-5 sm:mt-6 space-y-3 sm:space-y-4">
             <div
+              data-testid="answer-feedback"
               className={`p-4 rounded-lg ${
                 selectedIndex === question.correctIndex
                   ? "bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800"
@@ -152,6 +154,7 @@ export function QuizCard({
             {onToggleBookmark && (
               <button
                 onClick={() => onToggleBookmark(question.id)}
+                data-testid="bookmark-toggle"
                 className={`flex items-center justify-center gap-1.5 w-full py-2.5 rounded-lg border transition-colors min-h-[44px] ${
                   isBookmarked
                     ? "bg-amber-50 dark:bg-amber-900/20 border-amber-300 dark:border-amber-700 text-amber-700 dark:text-amber-300"
@@ -169,6 +172,7 @@ export function QuizCard({
 
             <button
               onClick={handleNext}
+              data-testid="next-question"
               className="w-full bg-indigo-600 text-white py-3 rounded-lg font-medium hover:bg-indigo-700 active:bg-indigo-800 active:scale-[0.98] transition-all min-h-[48px]"
             >
               {isLast ? "結果を見る" : "次の問題へ"}
