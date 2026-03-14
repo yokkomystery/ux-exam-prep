@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useSyncExternalStore } from "react";
+import { Progress } from "@/lib/types";
 import {
   getProgress,
   recordQuizAnswer,

@@ -32,9 +32,14 @@ export type CategoryInfo = {
 };
 
 export type QuizProgress = {
-  answeredQuestions: Record<string, { correct: boolean; answeredAt: number }>;
+  answeredQuestions: Record<string, QuizAnswerRecord>;
   bookmarkedQuestions: string[];
   everWrongQuestions: string[];
+};
+
+export type QuizAnswerRecord = {
+  correct: boolean;
+  answeredAt: number;
 };
 
 export type KeywordProgress = {

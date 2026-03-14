@@ -6,13 +6,15 @@ import { ProgressBar } from "@/components/ProgressBar";
 import { categories } from "@/lib/categories";
 import { questions } from "@/data/questions";
 import { keywords } from "@/data/keywords";
+import { QuizAnswerRecord } from "@/lib/types";
 
 export default function Dashboard() {
   const { progress, isLoaded } = useProgress();
 
   const totalQuestions = questions.length;
   const answeredCount = Object.keys(progress.quiz.answeredQuestions).length;
-  const correctCount = Object.values(progress.quiz.answeredQuestions).filter(
+  const answeredQuestions = Object.values(progress.quiz.answeredQuestions) as QuizAnswerRecord[];
+  const correctCount = answeredQuestions.filter(
     (v) => v.correct
   ).length;
   const wrongCount = answeredCount - correctCount;
